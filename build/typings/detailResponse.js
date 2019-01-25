@@ -12,6 +12,7 @@ class MovieInfo {
         this.IMDB = "";
         this.status = "";
         this.TV = false;
+        this.average = "";
     }
 }
 exports.MovieInfo = MovieInfo;

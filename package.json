@@ -6,8 +6,10 @@
   "scripts": {
     "start-ts": "ts-node ./src/schedule.ts",
     "spider-ts": "ts-node ./src/updateAll.ts",
+    "douban-ts": "ts-node ./src/updateDouban.ts",
     "start-js": "node ./build/schedule.js",
-    "spider-js": "node ./build/updateAll.js"
+    "spider-js": "node ./build/updateAll.js",
+    "douban-js": "node ./build/updateDouban.js"
   },
   "repository": {
     "type": "git",

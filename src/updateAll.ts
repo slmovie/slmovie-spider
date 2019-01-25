@@ -3,7 +3,7 @@ import { startDetailSpider } from "./dyjy/detail/detailSpider";
 
 // startDyjySpider(true);
 try {
-  startDetailSpider(26121, 0, () => {
+  startDetailSpider(25539, 0, () => {
     console.log("Update Finish!");
     process.exit(0);
   });

@@ -8,12 +8,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const dyjySpider_1 = require("./dyjy/dyjySpider");
+const doubanSpider_1 = __importDefault(require("./douban/doubanSpider"));
 const rule = new node_schedule_1.default.RecurrenceRule();
-rule.dayOfWeek = [0, new node_schedule_1.default.Range(5, 6)];
+rule.dayOfWeek = [3, 0];
+rule.hour = 4;
+rule.minute = 0;
+const doubanRule = new node_schedule_1.default.RecurrenceRule();
+rule.dayOfWeek = [1, 5];
 rule.hour = 4;
 rule.minute = 0;
 console.log("schedule running");
 node_schedule_1.default.scheduleJob(rule, function () {
     console.log("start update");
     dyjySpider_1.startDyjySpider(false);
+});
+node_schedule_1.default.scheduleJob(doubanRule, () => {
+    const douban = new doubanSpider_1.default();
+    douban.start(false);
 });

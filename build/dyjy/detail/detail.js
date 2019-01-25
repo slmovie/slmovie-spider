@@ -23,7 +23,7 @@ class DetailSpider {
             const myProxy = new proxy_1.default();
             const proxy = yield myProxy.getProxy();
             this.reqHtml(address, proxy, (result) => {
-                console.log("Address>>" + address + "====Proxy>>" + proxy);
+                // console.log("Address>>" + address + "====Proxy>>" + proxy);
                 myProxy.hasProxy(true);
                 callback(result);
             }, (error) => {
@@ -76,6 +76,7 @@ class DetailSpider {
             describe: $(".endtext").text(),
             details: this.handleDetails(detail),
             files: this.handleDownloads($),
+            doubanID: ""
         };
         return details;
     }

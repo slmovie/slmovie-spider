@@ -35,7 +35,7 @@ const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/nt/
     "https://www.xicidaili.com/wt/"];
 const reqHtml = () => {
     const target = parseInt(String(Math.random() * 3), 10) + 1;
-    const page = parseInt(String(Math.random() * 3), 10) + 1;
+    const page = parseInt(String(Math.random() * 3), 10);
     return new Promise((resolve) => {
         console.log("url>>>" + address[target] + page);
         request_1.default.get(address[target], (error, response, body) => {

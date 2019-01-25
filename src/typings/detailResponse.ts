@@ -15,6 +15,7 @@ export interface IMovieInfo {
   IMDB: string;
   status: string;
   TV: boolean;
+  average: string;
 }
 
 export class MovieInfo implements IMovieInfo {
@@ -27,7 +28,8 @@ export class MovieInfo implements IMovieInfo {
   otherName: string = "";
   IMDB: string = "";
   status: string = "";
-  TV = false
+  TV = false;
+  average = "";
 }
 
 export interface IDetails {
@@ -38,4 +40,5 @@ export interface IDetails {
   describe: string;
   details: IMovieInfo;
   files: IDownloadFiles[];
+  doubanID: string;
 }

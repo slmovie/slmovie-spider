@@ -20,24 +20,9 @@ const SaveDetail = (id, resolve) => {
             });
             const model = db.model("Movie", detailCon_1.MovieSchema);
             if (detail) {
-                findOneByID(model, id, (detailFromDB) => {
-                    if (detailFromDB === 0) {
-                        model.create(detail, (error) => {
-                            if (error) {
-                                status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
-                                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
-                                resolve(status);
-                            }
-                            else {
-                                status.code = status_1.StatusBean.SUCCESS;
-                                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
-                                resolve(status);
-                            }
-                            db.close();
-                        });
-                    }
-                    else if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
-                        model.update({ id: id }, { $set: detail }, (err) => {
+                exports.findOneByID(model, id, (detailFromDB) => {
+                    if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
+                        model.updateOne({ id: id }, { $set: { "files": detail.files } }, (err) => {
                             if (err) {
                                 status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
                                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
@@ -56,6 +41,20 @@ const SaveDetail = (id, resolve) => {
                         status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
                         resolve(status);
                     }
+                }, () => {
+                    model.create(detail, (error) => {
+                        if (error) {
+                            status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
+                            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
+                            resolve(status);
+                        }
+                        else {
+                            status.code = status_1.StatusBean.SUCCESS;
+                            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
+                            resolve(status);
+                        }
+                        db.close();
+                    });
                 });
             }
             else {
@@ -70,13 +69,13 @@ const SaveDetail = (id, resolve) => {
         }
     });
 };
-const findOneByID = (model, id, send) => {
+exports.findOneByID = (model, id, resolve, reject) => {
     model.findOne({ id: id }, (error, doc) => {
         if (error || doc == null) {
-            send(0);
+            reject();
         }
         else {
-            send(doc);
+            resolve(doc);
         }
     });
 };

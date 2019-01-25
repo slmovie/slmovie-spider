@@ -10,7 +10,7 @@ export default class DetailSpider {
     const myProxy = new MyProxy();
     const proxy = await myProxy.getProxy();
     this.reqHtml(address, proxy, (result: IDetails) => {
-      console.log("Address>>" + address + "====Proxy>>" + proxy);
+      // console.log("Address>>" + address + "====Proxy>>" + proxy);
       myProxy.hasProxy(true);
       callback(result);
     }, (error: any) => {
@@ -62,6 +62,7 @@ export default class DetailSpider {
       describe: $(".endtext").text(),
       details: this.handleDetails(detail),
       files: this.handleDownloads($),
+      doubanID: ""
     };
     return details;
   }

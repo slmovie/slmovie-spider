@@ -17,22 +17,9 @@ const SaveDetail = (id: string, resolve: any) => {
       });
       const model = db.model("Movie", MovieSchema);
       if (detail) {
-        findOneByID(model, id, (detailFromDB: any) => {
-          if (detailFromDB === 0) {
-            model.create(detail, (error: any) => {
-              if (error) {
-                status.code = StatusBean.FAILED_NEED_REPEAT;
-                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
-                resolve(status);
-              } else {
-                status.code = StatusBean.SUCCESS;
-                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
-                resolve(status);
-              }
-              db.close();
-            });
-          } else if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
-            model.update({ id: id }, { $set: detail }, (err: any) => {
+        findOneByID(model, id, (detailFromDB: IDetails) => {
+          if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
+            model.updateOne({ id: id }, { $set: { "files": detail.files }}, (err: any) => {
               if (err) {
                 status.code = StatusBean.FAILED_NEED_REPEAT;
                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
@@ -49,6 +36,19 @@ const SaveDetail = (id: string, resolve: any) => {
             status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
             resolve(status);
           }
+        }, () => {
+          model.create(detail, (error: any) => {
+            if (error) {
+              status.code = StatusBean.FAILED_NEED_REPEAT;
+              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
+              resolve(status);
+            } else {
+              status.code = StatusBean.SUCCESS;
+              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
+              resolve(status);
+            }
+            db.close();
+          });
         });
       } else {
         status.code = StatusBean.SUCCESS;
@@ -62,12 +62,12 @@ const SaveDetail = (id: string, resolve: any) => {
   });
 };
 
-const findOneByID = (model: any, id: string, send: any) => {
+export const findOneByID = (model: any, id: string, resolve: any, reject: any) => {
   model.findOne({ id: id }, (error: any, doc: any) => {
     if (error || doc == null) {
-      send(0);
+      reject();
     } else {
-      send(doc);
+      resolve(doc);
     }
   });
 };
