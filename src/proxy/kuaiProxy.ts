@@ -2,7 +2,7 @@
  * Created by 包俊 on 2018/5/15.
  */
 import cheerio from "cheerio";
-import https from "https";
+import request from "request";
 import { Proxy } from "../typings/proxy";
 
 export const getKuaiPoxy = async (): Promise<string[]> => {
@@ -24,18 +24,12 @@ export const getKuaiPoxy = async (): Promise<string[]> => {
 const reqHtml = (page: string): Promise<string> => {
   return new Promise((resolve) => {
     console.log("url>>>https://ip.seofangfa.com/proxy/" + page + ".html");
-    let req = https.get("https://ip.seofangfa.com/proxy/" + page + ".html", function (res: any) {
-      let html = "";
-      res.on("data", function (data: any) {
-        html += data;
-      });
-      res.on("end", function () {
-        resolve(html);
-      });
+    request.get("https://ip.seofangfa.com/proxy/" + page + ".html", (error, response, body) => {
+      if (error || response.statusCode !== 200) {
+        resolve("0");
+      } else {
+        resolve(body);
+      }
     });
-    req.on("error", () => {
-      resolve("0");
-    });
-    req.end();
   });
 };

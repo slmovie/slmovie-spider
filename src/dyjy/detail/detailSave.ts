@@ -31,7 +31,7 @@ const SaveDetail = (id: string, resolve: any) => {
               }
               db.close();
             });
-          } else if (JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
+          } else if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
             model.update({ id: id }, { $set: detail }, (err: any) => {
               if (err) {
                 status.code = StatusBean.FAILED_NEED_REPEAT;

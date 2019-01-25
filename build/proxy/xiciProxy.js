@@ -17,25 +17,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cheerio_1 = __importDefault(require("cheerio"));
 const request_1 = __importDefault(require("request"));
 const proxy_1 = require("../typings/proxy");
-exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
-    const page = parseInt(String(Math.random() * 10), 10) + 1;
-    let res = yield reqHtml(String(page));
+exports.getXiciPoxy = () => __awaiter(this, void 0, void 0, function* () {
+    let res = yield reqHtml();
     let $ = cheerio_1.default.load(res);
     let tr = $("tr");
     const proxys = [];
     for (let line = 1; line < tr.length; line++) {
         let td = $(tr[line]).children("td");
-        const proxy = new proxy_1.Proxy("http://" + td[0].children[0].data, td[1].children[0].data);
+        const proxy = new proxy_1.Proxy(String(td[5].children[0].data).toLowerCase() + "://" + td[1].children[0].data, td[2].children[0].data);
         proxys.push(proxy.getProxy());
     }
     return new Promise(resolve => {
         resolve(proxys);
     });
 });
-const reqHtml = (page) => {
+const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/nt/",
+    "https://www.xicidaili.com/wt/"];
+const reqHtml = () => {
+    const target = parseInt(String(Math.random() * 3), 10) + 1;
+    const page = parseInt(String(Math.random() * 3), 10) + 1;
     return new Promise((resolve) => {
-        console.log("url>>>https://ip.seofangfa.com/proxy/" + page + ".html");
-        request_1.default.get("https://ip.seofangfa.com/proxy/" + page + ".html", (error, response, body) => {
+        console.log("url>>>" + address[target] + page);
+        request_1.default.get(address[target], (error, response, body) => {
             if (error || response.statusCode !== 200) {
                 resolve("0");
             }

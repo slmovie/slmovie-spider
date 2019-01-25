@@ -1,6 +1,10 @@
+import { getKuaiPoxy } from "../../build/proxy/kuaiProxy";
+import { getXiciPoxy } from "./xiciProxy";
 import MyProxy from "./proxy";
 
-const test = new MyProxy();
-for (let i = 0; i < 50; i++) {
-  test.getProxy();
-}
+// getXiciPoxy().then((proxys: string[]) => {
+//   console.log(proxys);
+// });
+
+// const test = new MyProxy();
+// test.getProxy();
