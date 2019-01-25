@@ -4,18 +4,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const detail_1 = __importDefault(require("./detail"));
-const detailCon_1 = require("./detailCon");
+const mongoose_1 = __importDefault(require("mongoose"));
+const dbConstans_1 = require("../../dbConstans");
 const status_1 = require("../../typings/status");
+const detailCon_1 = require("./detailCon");
 const SaveDetail = (id, resolve) => {
     const detailSpider = new detail_1.default();
     const status = new status_1.StatusBean();
-    try {
-        detailSpider.getDatail(id, (detail) => {
-            const db = detailCon_1.MoviesDB();
+    detailSpider.getDatail(id, (detail) => {
+        try {
+            const db = mongoose_1.default.createConnection(dbConstans_1.getDBAddress() + "/movies", { useNewUrlParser: true });
+            db.on("error", (error) => {
+                console.log(error);
+                process.exit(0);
+            });
+            const model = db.model("Movie", detailCon_1.MovieSchema);
             if (detail) {
-                findOneByID(db, id, (detailFromDB) => {
+                findOneByID(model, id, (detailFromDB) => {
                     if (detailFromDB === 0) {
-                        detailCon_1.MovieModel(db).create(detail, function (error) {
+                        model.create(detail, (error) => {
                             if (error) {
                                 status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
                                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
@@ -30,7 +37,7 @@ const SaveDetail = (id, resolve) => {
                         });
                     }
                     else if (JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
-                        detailCon_1.MovieModel(db).update({ id: id }, { $set: detail }, (err) => {
+                        model.update({ id: id }, { $set: detail }, (err) => {
                             if (err) {
                                 status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
                                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
@@ -56,14 +63,15 @@ const SaveDetail = (id, resolve) => {
                 status.error = ("SaveDetail>>>" + id + ">>>不存在");
                 resolve(status);
             }
-        });
-    }
-    catch (error) {
-        SaveDetail(id, resolve);
-    }
+        }
+        catch (error) {
+            console.log("catch>>>" + error);
+            SaveDetail(id, resolve);
+        }
+    });
 };
-const findOneByID = (db, id, send) => {
-    detailCon_1.MovieModel(db).findOne({ id: id }, function (error, doc) {
+const findOneByID = (model, id, send) => {
+    model.findOne({ id: id }, (error, doc) => {
         if (error || doc == null) {
             send(0);
         }

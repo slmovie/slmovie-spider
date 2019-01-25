@@ -8,8 +8,8 @@ exports.startDetailSpider = (start, end, resolve) => {
     try {
         detailSave_1.default(String(start), (result) => {
             console.log(JSON.stringify(result));
-            if (start <= end) {
-                exports.startDetailSpider(start + 1, end, resolve);
+            if (start >= end) {
+                exports.startDetailSpider(start - 1, end, resolve);
             }
             else {
                 resolve();
@@ -18,6 +18,6 @@ exports.startDetailSpider = (start, end, resolve) => {
     }
     catch (error) {
         console.log("startDetailSpider>>>reject>>>" + JSON.stringify(error));
-        exports.startDetailSpider(start + 1, end, resolve);
+        exports.startDetailSpider(start, end, resolve);
     }
 };

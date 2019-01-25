@@ -44,6 +44,6 @@ module.exports = {
     ],
     "no-throw-literal": [
       0,
-    ]
+    ],
   }
 };

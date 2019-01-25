@@ -4,7 +4,7 @@ import DetailSpider from "./detail";
 import { IDetails } from "../../typings/detailResponse";
 
 // SaveDetail("4");
-startDetailSpider(0, 1000, () => {
+startDetailSpider(1000, 1000, () => {
   console.log("Update Detail Finish");
 });
 // const test = new DetailSpider();

@@ -1,18 +1,25 @@
 import DetailSpider from "./detail";
-import { MoviesDB, MovieModel } from "./detailCon";
+import mongoose from "mongoose";
+import { getDBAddress } from "../../dbConstans";
 import { StatusBean } from "../../typings/status";
 import { IDetails } from "../../typings/detailResponse";
+import { MovieSchema } from "./detailCon";
 
 const SaveDetail = (id: string, resolve: any) => {
   const detailSpider = new DetailSpider();
   const status = new StatusBean();
-  try {
-    detailSpider.getDatail(id, (detail: IDetails) => {
-      const db = MoviesDB();
+  detailSpider.getDatail(id, (detail: IDetails) => {
+    try {
+      const db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
+      db.on("error", (error) => {
+        console.log(error);
+        process.exit(0);
+      });
+      const model = db.model("Movie", MovieSchema);
       if (detail) {
-        findOneByID(db, id, (detailFromDB: any) => {
+        findOneByID(model, id, (detailFromDB: any) => {
           if (detailFromDB === 0) {
-            MovieModel(db).create(detail, function (error: any) {
+            model.create(detail, (error: any) => {
               if (error) {
                 status.code = StatusBean.FAILED_NEED_REPEAT;
                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
@@ -25,7 +32,7 @@ const SaveDetail = (id: string, resolve: any) => {
               db.close();
             });
           } else if (JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
-            MovieModel(db).update({ id: id }, { $set: detail }, (err: any) => {
+            model.update({ id: id }, { $set: detail }, (err: any) => {
               if (err) {
                 status.code = StatusBean.FAILED_NEED_REPEAT;
                 status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
@@ -48,14 +55,15 @@ const SaveDetail = (id: string, resolve: any) => {
         status.error = ("SaveDetail>>>" + id + ">>>不存在");
         resolve(status);
       }
-    });
-  } catch (error) {
-    SaveDetail(id, resolve);
-  }
+    } catch (error) {
+      console.log("catch>>>" + error);
+      SaveDetail(id, resolve);
+    }
+  });
 };
 
-const findOneByID = (db: any, id: string, send: any) => {
-  MovieModel(db).findOne({ id: id }, function (error, doc) {
+const findOneByID = (model: any, id: string, send: any) => {
+  model.findOne({ id: id }, (error: any, doc: any) => {
     if (error || doc == null) {
       send(0);
     } else {

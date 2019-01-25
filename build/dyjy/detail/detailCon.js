@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const dbConstans_1 = require("../../dbConstans");
 /**
  * Created by 包俊 on 2017/3/27.
  */
@@ -26,7 +25,7 @@ const details = new mongoose_1.default.Schema({
     TV: Boolean,
     average: String,
 });
-const MovieSchema = new mongoose_1.default.Schema({
+exports.MovieSchema = new mongoose_1.default.Schema({
     name: String,
     post: String,
     describe: String,
@@ -36,9 +35,3 @@ const MovieSchema = new mongoose_1.default.Schema({
     id: String,
     doubanID: String,
 });
-exports.MoviesDB = () => {
-    return mongoose_1.default.createConnection(dbConstans_1.getDBAddress() + "/movies", { useNewUrlParser: true });
-};
-exports.MovieModel = (db) => {
-    return db.model("Movie", MovieSchema);
-};

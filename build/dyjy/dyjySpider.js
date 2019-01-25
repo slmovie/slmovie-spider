@@ -6,12 +6,12 @@ exports.startDyjySpider = (total) => {
     try {
         homeSpider_1.getMaxLength((length) => {
             console.log("total is " + length);
-            let start = length - 2000;
-            if (total) {
-                start = 0;
+            let end = 1;
+            if (!total) {
+                end = length - 1500;
             }
-            detailSpider_1.startDetailSpider(start, length, () => {
-                homeSpider_1.startHomeSpider(() => {
+            homeSpider_1.startHomeSpider(() => {
+                detailSpider_1.startDetailSpider(length, end, () => {
                     console.log("Update Finish!");
                     process.exit(0);
                 });

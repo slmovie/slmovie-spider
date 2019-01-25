@@ -24,6 +24,10 @@ export const Save = (doc: HomeRecBean): Promise<void> => {
 const saveHotMovies = (docs: IRecMovie[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     const db = getDB(DBName.HotMovies);
+    db.on("error", (error) => {
+      console.log(error);
+      process.exit(0);
+    });
     const model = getModel(db, HotMoviesTabkleName);
     saveMovie(docs, model, db).then(() => resolve()).catch(error => {
       console.log("Hot Movies error " + error);
@@ -35,6 +39,10 @@ const saveHotMovies = (docs: IRecMovie[]): Promise<void> => {
 const saveNewMovies = (data: IMoviesListItem[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     const db = getDB(DBName.NewMovies);
+    db.on("error", (error) => {
+      console.log(error);
+      process.exit(0);
+    });
     let index = 0;
     for (let i = 0; i < data.length; i++) {
       const model = getModel(db, getNewMoviesModelName(data[i].index));
@@ -56,6 +64,10 @@ const saveNewMovies = (data: IMoviesListItem[]): Promise<void> => {
 const saveNewTVs = (data: IMoviesListItem[]): Promise<void> => {
   return new Promise((resolve, reject) => {
     const db = getDB(DBName.NewTvs);
+    db.on("error", (error) => {
+      console.log(error);
+      process.exit(0);
+    });
     let index = 0;
     for (let i = 0; i < data.length; i++) {
       const model = getModel(db, getNewTvsModelName(data[i].index));

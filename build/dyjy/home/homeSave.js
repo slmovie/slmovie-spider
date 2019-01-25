@@ -22,6 +22,10 @@ exports.Save = (doc) => {
 const saveHotMovies = (docs) => {
     return new Promise((resolve, reject) => {
         const db = homeCon_1.getDB(homeCon_1.DBName.HotMovies);
+        db.on("error", (error) => {
+            console.log(error);
+            process.exit(0);
+        });
         const model = homeCon_1.getModel(db, homeCon_1.HotMoviesTabkleName);
         saveMovie(docs, model, db).then(() => resolve()).catch(error => {
             console.log("Hot Movies error " + error);
@@ -32,6 +36,10 @@ const saveHotMovies = (docs) => {
 const saveNewMovies = (data) => {
     return new Promise((resolve, reject) => {
         const db = homeCon_1.getDB(homeCon_1.DBName.NewMovies);
+        db.on("error", (error) => {
+            console.log(error);
+            process.exit(0);
+        });
         let index = 0;
         for (let i = 0; i < data.length; i++) {
             const model = homeCon_1.getModel(db, homeCon_1.getNewMoviesModelName(data[i].index));
@@ -52,6 +60,10 @@ const saveNewMovies = (data) => {
 const saveNewTVs = (data) => {
     return new Promise((resolve, reject) => {
         const db = homeCon_1.getDB(homeCon_1.DBName.NewTvs);
+        db.on("error", (error) => {
+            console.log(error);
+            process.exit(0);
+        });
         let index = 0;
         for (let i = 0; i < data.length; i++) {
             const model = homeCon_1.getModel(db, homeCon_1.getNewTvsModelName(data[i].index));

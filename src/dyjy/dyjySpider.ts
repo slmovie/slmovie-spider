@@ -5,18 +5,17 @@ export const startDyjySpider = (total: boolean) => {
   try {
     getMaxLength((length: number) => {
       console.log("total is " + length);
-      let start = length - 2000;
-      if (total) {
-        start = 0;
+      let end = 1;
+      if (!total) {
+        end = length - 1500;
       }
-      startDetailSpider(start, length, () => {
-        startHomeSpider(() => {
+      startHomeSpider(() => {
+        startDetailSpider(length, end, () => {
           console.log("Update Finish!");
           process.exit(0);
         });
       });
     });
-
   } catch (error) {
     console.log("startDyjySpider>>" + JSON.stringify(error));
     process.exit(0);

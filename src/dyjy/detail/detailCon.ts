@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { getDBAddress } from "../../dbConstans";
 
 /**
  * Created by 包俊 on 2017/3/27.
@@ -25,7 +24,7 @@ const details = new mongoose.Schema({
   average: String,
 });
 
-const MovieSchema = new mongoose.Schema({
+export const MovieSchema = new mongoose.Schema({
   name: String,
   post: String,
   describe: String,
@@ -35,11 +34,3 @@ const MovieSchema = new mongoose.Schema({
   id: String,
   doubanID: String,
 });
-
-export const MoviesDB = () => {
-  return mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
-};
-
-export const MovieModel = (db: mongoose.Connection) => {
-  return db.model("Movie", MovieSchema);
-};
