@@ -30,6 +30,18 @@ export default class DoubanSpider {
     }
   }
 
+  public partUpdate(start: number) {
+    try {
+      this.circle(start, 1, () => {
+        console.log("Douban spider finish!");
+        process.exit(0);
+      });
+    } catch (error) {
+      console.log("DoubanSpider>>" + JSON.stringify(error));
+      process.exit(0);
+    }
+  }
+
   private circle(start: number, end: number, resolve: any) {
     this.handle(String(start), (result: IStatus) => {
       console.log(JSON.stringify(result));
@@ -52,7 +64,7 @@ export default class DoubanSpider {
       if (detailFromDB.details.IMDB) {
         if (!detailFromDB.doubanID || detailFromDB.post.indexOf(".gif") !== -1 || !detailFromDB.details.average) {
           this.getDouban(detailFromDB.details.IMDB, (douban: IDoubanSearch) => {
-            if (douban.subjects.length > 0) {
+            if (douban.total > 0 && douban.subjects.length > 0) {
               this.save(model, douban.subjects[0], detailFromDB, (result: IStatus) => {
                 resolve(result);
               });
@@ -105,7 +117,7 @@ export default class DoubanSpider {
   private async getDouban(imdb: string, callback: any) {
     const myProxy = new MyProxy();
     const proxy = await myProxy.getProxy();
-    this.reqJson(imdb, proxy, (result: any) => {
+    this.reqJson(imdb, proxy, (result: string) => {
       myProxy.hasProxy(true);
       callback(result);
     }, (error: any) => {
@@ -118,16 +130,12 @@ export default class DoubanSpider {
     const myReq = request.defaults({ "proxy": proxy });
     myReq.get("http://api.douban.com/v2/movie/search?q=" + imdb,
       { json: true, timeout: 3000 },
-      (error, response, body: IDoubanSearch) => {
+      (error, response, body: string) => {
         if (error) {
           reject(error);
         } else {
           if (response.statusCode === 200) {
-            if (body.subjects.length > 0) {
-              resolve(body);
-            } else {
-              resolve();
-            }
+            resolve(body);
           } else {
             reject("statusCode>>>" + response.statusCode);
           }

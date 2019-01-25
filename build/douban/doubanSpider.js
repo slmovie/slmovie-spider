@@ -39,6 +39,18 @@ class DoubanSpider {
             process.exit(0);
         }
     }
+    partUpdate(start) {
+        try {
+            this.circle(start, 1, () => {
+                console.log("Douban spider finish!");
+                process.exit(0);
+            });
+        }
+        catch (error) {
+            console.log("DoubanSpider>>" + JSON.stringify(error));
+            process.exit(0);
+        }
+    }
     circle(start, end, resolve) {
         this.handle(String(start), (result) => {
             console.log(JSON.stringify(result));
@@ -61,7 +73,7 @@ class DoubanSpider {
             if (detailFromDB.details.IMDB) {
                 if (!detailFromDB.doubanID || detailFromDB.post.indexOf(".gif") !== -1 || !detailFromDB.details.average) {
                     this.getDouban(detailFromDB.details.IMDB, (douban) => {
-                        if (douban.subjects.length > 0) {
+                        if (douban.total > 0 && douban.subjects.length > 0) {
                             this.save(model, douban.subjects[0], detailFromDB, (result) => {
                                 resolve(result);
                             });
@@ -134,12 +146,7 @@ class DoubanSpider {
             }
             else {
                 if (response.statusCode === 200) {
-                    if (body.subjects.length > 0) {
-                        resolve(body);
-                    }
-                    else {
-                        resolve();
-                    }
+                    resolve(body);
                 }
                 else {
                     reject("statusCode>>>" + response.statusCode);

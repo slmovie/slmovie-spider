@@ -5,3 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // });
 // const test = new MyProxy();
 // test.getProxy();
+do {
+    const target = parseInt(String(Math.random() * 3), 10) + 1;
+    console.log(target);
+} while (false);
