@@ -7,14 +7,16 @@ import { Proxy } from "../typings/proxy";
 
 export const getKuaiPoxy = async (): Promise<string[]> => {
   const page = parseInt(String(Math.random() * 10), 10) + 1;
-  let res = await reqHtml(String(page));
-  let $ = cheerio.load(res);
-  let tr = $("tr");
   const proxys: string[] = [];
-  for (let line = 1; line < tr.length; line++) {
-    let td = $(tr[line]).children("td");
-    const proxy = new Proxy("http://" + td[0].children[0].data, td[1].children[0].data);
-    proxys.push(proxy.getProxy());
+  let res = await reqHtml(String(page));
+  if (res !== "0") {
+    let $ = cheerio.load(res);
+    let tr = $("tr");
+    for (let line = 1; line < tr.length; line++) {
+      let td = $(tr[line]).children("td");
+      const proxy = new Proxy("http://" + td[0].children[0].data, td[1].children[0].data);
+      proxys.push(proxy.getProxy());
+    }
   }
   return new Promise(resolve => {
     resolve(proxys);

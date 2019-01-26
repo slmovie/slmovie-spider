@@ -19,14 +19,16 @@ const request_1 = __importDefault(require("request"));
 const proxy_1 = require("../typings/proxy");
 exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
     const page = parseInt(String(Math.random() * 10), 10) + 1;
-    let res = yield reqHtml(String(page));
-    let $ = cheerio_1.default.load(res);
-    let tr = $("tr");
     const proxys = [];
-    for (let line = 1; line < tr.length; line++) {
-        let td = $(tr[line]).children("td");
-        const proxy = new proxy_1.Proxy("http://" + td[0].children[0].data, td[1].children[0].data);
-        proxys.push(proxy.getProxy());
+    let res = yield reqHtml(String(page));
+    if (res !== "0") {
+        let $ = cheerio_1.default.load(res);
+        let tr = $("tr");
+        for (let line = 1; line < tr.length; line++) {
+            let td = $(tr[line]).children("td");
+            const proxy = new proxy_1.Proxy("http://" + td[0].children[0].data, td[1].children[0].data);
+            proxys.push(proxy.getProxy());
+        }
     }
     return new Promise(resolve => {
         resolve(proxys);

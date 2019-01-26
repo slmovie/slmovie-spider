@@ -140,7 +140,7 @@ class DoubanSpider {
     }
     reqJson(imdb, proxy, resolve, reject) {
         const myReq = request_1.default.defaults({ "proxy": proxy });
-        myReq.get("http://api.douban.com/v2/movie/search?q=" + imdb, { json: true, timeout: 3000 }, (error, response, body) => {
+        myReq.get("http://api.douban.com/v2/movie/search?q=" + imdb, { json: true, timeout: 1500 }, (error, response, body) => {
             if (error) {
                 reject(error);
             }

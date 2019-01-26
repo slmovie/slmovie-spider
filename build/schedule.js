@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Created by 包俊 on 2017/7/9.
  */
 const node_schedule_1 = __importDefault(require("node-schedule"));
-const dyjySpider_1 = require("./dyjy/dyjySpider");
+const dyjySpider_1 = __importDefault(require("./dyjy/dyjySpider"));
 const doubanSpider_1 = __importDefault(require("./douban/doubanSpider"));
 const rule = new node_schedule_1.default.RecurrenceRule();
 rule.dayOfWeek = [3, 0];
@@ -20,7 +20,8 @@ rule.minute = 0;
 console.log("schedule running");
 node_schedule_1.default.scheduleJob(rule, function () {
     console.log("start update");
-    dyjySpider_1.startDyjySpider(false);
+    const dyjy = new dyjySpider_1.default();
+    dyjy.start(false);
 });
 node_schedule_1.default.scheduleJob(doubanRule, () => {
     const douban = new doubanSpider_1.default();

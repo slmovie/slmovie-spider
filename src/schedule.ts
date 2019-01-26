@@ -2,7 +2,7 @@
  * Created by 包俊 on 2017/7/9.
  */
 import schedule from "node-schedule";
-import { startDyjySpider } from "./dyjy/dyjySpider";
+import DyjySpider from "./dyjy/dyjySpider";
 import DoubanSpider from "./douban/doubanSpider";
 
 const rule = new schedule.RecurrenceRule();
@@ -19,7 +19,8 @@ console.log("schedule running");
 
 schedule.scheduleJob(rule, function () {
   console.log("start update");
-  startDyjySpider(false);
+  const dyjy = new DyjySpider();
+  dyjy.start(false);
 });
 
 schedule.scheduleJob(doubanRule, () => {

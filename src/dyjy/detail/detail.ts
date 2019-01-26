@@ -22,7 +22,7 @@ export default class DetailSpider {
   private reqHtml(address: string, proxy: string, resolve: any, reject: any) {
     const myReq = request.defaults({ "proxy": proxy });
     myReq.get("http://www.idyjy.com/sub/" + address + ".html",
-      { encoding: "binary", timeout: 1000 },
+      { encoding: "binary", timeout: 1500 },
       (error, response, res) => {
         if (error) {
           reject(error);

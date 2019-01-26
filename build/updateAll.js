@@ -1,14 +1,8 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const detailSpider_1 = require("./dyjy/detail/detailSpider");
-// startDyjySpider(true);
-try {
-    detailSpider_1.startDetailSpider(25539, 0, () => {
-        console.log("Update Finish!");
-        process.exit(0);
-    });
-}
-catch (error) {
-    console.log("startDyjySpider>>" + JSON.stringify(error));
-    process.exit(0);
-}
+const dyjySpider_1 = __importDefault(require("./dyjy/dyjySpider"));
+const dyjySpider = new dyjySpider_1.default();
+dyjySpider.partUpdate(24727);
