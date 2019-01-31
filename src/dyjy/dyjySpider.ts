@@ -2,13 +2,13 @@ import { startHomeSpider, getMaxLength } from "./home/homeSpider";
 import { startDetailSpider } from "./detail/detailSpider";
 
 export default class DyjySpider {
-  public start(total: boolean) {
+  public start(total: boolean, range: number) {
     try {
       getMaxLength((length: number) => {
         console.log("total is " + length);
         let end = 1;
         if (!total) {
-          end = length - 1500;
+          end = length - range;
         }
         startHomeSpider(() => {
           startDetailSpider(length, end, () => {
@@ -23,9 +23,9 @@ export default class DyjySpider {
     }
   }
 
-  public partUpdate(start: number) {
+  public partUpdate(start: number, end: number) {
     try {
-      startDetailSpider(start, 1, () => {
+      startDetailSpider(start, end, () => {
         console.log("Update Finish!");
         process.exit(0);
       });
@@ -34,5 +34,6 @@ export default class DyjySpider {
       process.exit(0);
     }
   }
+
 }
 

@@ -33,15 +33,13 @@ exports.getXiciPoxy = () => __awaiter(this, void 0, void 0, function* () {
         resolve(proxys);
     });
 });
-const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/nt/",
-    "https://www.xicidaili.com/wt/"];
+const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/wt/", "https://www.xicidaili.com/nn/"];
 const reqHtml = () => {
     const target = parseInt(String(Math.random() * 3), 10);
-    const page = parseInt(String(Math.random() * 2), 10) + 1;
+    const page = parseInt(String(Math.random() * 3), 10) + 1;
     return new Promise((resolve) => {
-        console.log("target>>>" + target);
         console.log("url>>>" + address[target] + page);
-        request_1.default.get(address[target], (error, response, body) => {
+        request_1.default.get(address[target] + page, { timeout: 1500 }, (error, response, body) => {
             if (error || response.statusCode !== 200) {
                 resolve("0");
             }

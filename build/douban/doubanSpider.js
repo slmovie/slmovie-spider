@@ -26,7 +26,7 @@ class DoubanSpider {
                 console.log("total is " + length);
                 let end = 1;
                 if (!total) {
-                    end = length - 1500;
+                    end = length - 500;
                 }
                 this.circle(length, end, () => {
                     console.log("Douban spider finish!");
@@ -39,9 +39,9 @@ class DoubanSpider {
             process.exit(0);
         }
     }
-    partUpdate(start) {
+    partUpdate(start, end) {
         try {
-            this.circle(start, 1, () => {
+            this.circle(start, end, () => {
                 console.log("Douban spider finish!");
                 process.exit(0);
             });
@@ -63,9 +63,8 @@ class DoubanSpider {
         });
     }
     handle(id, resolve) {
-        const db = mongoose_1.default.createConnection(dbConstans_1.getDBAddress() + "/movies", { useNewUrlParser: true });
-        const model = db.model("Movie", detailCon_1.MovieSchema);
-        db.on("error", (error) => {
+        const model = DoubanSpider.db.model("Movie", detailCon_1.MovieSchema);
+        DoubanSpider.db.on("error", (error) => {
             console.log(error);
             process.exit(0);
         });
@@ -155,4 +154,5 @@ class DoubanSpider {
         });
     }
 }
+DoubanSpider.db = mongoose_1.default.createConnection(dbConstans_1.getDBAddress() + "/movies", { useNewUrlParser: true });
 exports.default = DoubanSpider;

@@ -9,12 +9,14 @@ export default class DetailSpider {
   async getDatail(address: string, callback: any) {
     const myProxy = new MyProxy();
     const proxy = await myProxy.getProxy();
+    // console.log("Check " + proxy + ">>" + address);
     this.reqHtml(address, proxy, (result: IDetails) => {
       // console.log("Address>>" + address + "====Proxy>>" + proxy);
       myProxy.hasProxy(true);
       callback(result);
     }, (error: any) => {
       myProxy.hasProxy(false);
+      // console.log(error);
       this.getDatail(address, callback);
     });
   }
@@ -22,7 +24,7 @@ export default class DetailSpider {
   private reqHtml(address: string, proxy: string, resolve: any, reject: any) {
     const myReq = request.defaults({ "proxy": proxy });
     myReq.get("http://www.idyjy.com/sub/" + address + ".html",
-      { encoding: "binary", timeout: 1500 },
+      { encoding: "binary", timeout: 3000 },
       (error, response, res) => {
         if (error) {
           reject(error);

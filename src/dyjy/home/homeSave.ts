@@ -91,7 +91,6 @@ const saveMovie = (docs: IRecMovie[], model: mongoose.Model<any>, db: mongoose.C
     model.remove({}, (err) => {
       if (err) {
         console.log("saveMovie>>>remove>>>" + err);
-        db.close();
         reject();
       } else {
         model.create(docs, (err: any) => {
@@ -101,7 +100,6 @@ const saveMovie = (docs: IRecMovie[], model: mongoose.Model<any>, db: mongoose.C
           } else {
             resolve();
           }
-          db.close();
         });
       }
     });

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * Created by 包俊 on 2018/5/15.
  */
 const kuaiProxy_1 = require("./kuaiProxy");
-const xiciProxy_1 = require("./xiciProxy");
+// import { getXiciPoxy } from "./xiciProxy";
 let Proxy = "";
 let Proxys = [];
 let hasProxy = false;
@@ -21,16 +21,14 @@ class MyProxy {
         return __awaiter(this, void 0, void 0, function* () {
             if (!hasProxy) {
                 if (Proxys.length === 0) {
-                    const target = parseInt(String(Math.random() * 2), 10);
-                    if (target === 0) {
-                        Proxys = yield kuaiProxy_1.getKuaiPoxy();
-                    }
-                    else {
-                        Proxys = yield xiciProxy_1.getXiciPoxy();
-                    }
+                    // const target = parseInt(String(Math.random() * 2), 10);
+                    // if (target === 0) {
+                    Proxys = yield kuaiProxy_1.getKuaiPoxy();
+                    // } else {
+                    // Proxys = await getXiciPoxy();
+                    // }
                 }
                 Proxy = Proxys[0];
-                console.log("Check " + Proxy);
                 Proxys = Proxys.slice(1, Proxys.length);
             }
             return Proxy;

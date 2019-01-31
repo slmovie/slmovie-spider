@@ -37,7 +37,7 @@ exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
 const reqHtml = (page) => {
     return new Promise((resolve) => {
         console.log("url>>>https://ip.seofangfa.com/proxy/" + page + ".html");
-        request_1.default.get("https://ip.seofangfa.com/proxy/" + page + ".html", (error, response, body) => {
+        request_1.default.get("https://ip.seofangfa.com/proxy/" + page + ".html", { timeout: 1500 }, (error, response, body) => {
             if (error || response.statusCode !== 200) {
                 resolve("0");
             }

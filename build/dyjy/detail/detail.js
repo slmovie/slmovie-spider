@@ -22,19 +22,21 @@ class DetailSpider {
         return __awaiter(this, void 0, void 0, function* () {
             const myProxy = new proxy_1.default();
             const proxy = yield myProxy.getProxy();
+            // console.log("Check " + proxy + ">>" + address);
             this.reqHtml(address, proxy, (result) => {
                 // console.log("Address>>" + address + "====Proxy>>" + proxy);
                 myProxy.hasProxy(true);
                 callback(result);
             }, (error) => {
                 myProxy.hasProxy(false);
+                // console.log(error);
                 this.getDatail(address, callback);
             });
         });
     }
     reqHtml(address, proxy, resolve, reject) {
         const myReq = request_1.default.defaults({ "proxy": proxy });
-        myReq.get("http://www.idyjy.com/sub/" + address + ".html", { encoding: "binary", timeout: 1500 }, (error, response, res) => {
+        myReq.get("http://www.idyjy.com/sub/" + address + ".html", { encoding: "binary", timeout: 3000 }, (error, response, res) => {
             if (error) {
                 reject(error);
             }

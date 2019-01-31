@@ -5,12 +5,13 @@ import { StatusBean } from "../../typings/status";
 import { IDetails } from "../../typings/detailResponse";
 import { MovieSchema } from "./detailCon";
 
+const db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
+
 const SaveDetail = (id: string, resolve: any) => {
   const detailSpider = new DetailSpider();
   const status = new StatusBean();
   detailSpider.getDatail(id, (detail: IDetails) => {
     try {
-      const db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
       db.on("error", (error) => {
         console.log(error);
         process.exit(0);
@@ -18,19 +19,36 @@ const SaveDetail = (id: string, resolve: any) => {
       const model = db.model("Movie", MovieSchema);
       if (detail) {
         findOneByID(model, id, (detailFromDB: IDetails) => {
-          if (detail.files.length !== 0 && JSON.stringify(detail.files) === JSON.stringify(detailFromDB.files)) {
-            model.updateOne({ id: id }, { $set: { "files": detail.files }}, (err: any) => {
-              if (err) {
-                status.code = StatusBean.FAILED_NEED_REPEAT;
-                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
-                resolve(status);
-              } else {
-                status.code = StatusBean.SUCCESS;
-                status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新成功");
-                resolve(status);
+          if (detail.files.length !== 0) {
+            let update = false;
+            if (detail.files.length !== detailFromDB.files.length) {
+              update = true;
+            }
+            if (!update) {
+              for (let i = 0; i < detail.files.length; i++) {
+                if (detail.files[i].download !== detailFromDB.files[i].download) {
+                  update = true;
+                }
+                if (update) { break; }
               }
-              db.close();
-            });
+            }
+            if (update) {
+              model.updateOne({ id: id }, { $set: { "files": detail.files }}, (err: any) => {
+                if (err) {
+                  status.code = StatusBean.FAILED_NEED_REPEAT;
+                  status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
+                  resolve(status);
+                } else {
+                  status.code = StatusBean.SUCCESS;
+                  status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新成功");
+                  resolve(status);
+                }
+              });
+            } else {
+              status.code = StatusBean.SUCCESS;
+              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
+              resolve(status);
+            }
           } else {
             status.code = StatusBean.SUCCESS;
             status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
@@ -40,14 +58,13 @@ const SaveDetail = (id: string, resolve: any) => {
           model.create(detail, (error: any) => {
             if (error) {
               status.code = StatusBean.FAILED_NEED_REPEAT;
-              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存失败");
+              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>" + error);
               resolve(status);
             } else {
               status.code = StatusBean.SUCCESS;
               status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
               resolve(status);
             }
-            db.close();
           });
         });
       } else {

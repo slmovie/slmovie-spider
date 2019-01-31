@@ -86,7 +86,6 @@ const saveMovie = (docs, model, db) => {
         model.remove({}, (err) => {
             if (err) {
                 console.log("saveMovie>>>remove>>>" + err);
-                db.close();
                 reject();
             }
             else {
@@ -98,7 +97,6 @@ const saveMovie = (docs, model, db) => {
                     else {
                         resolve();
                     }
-                    db.close();
                 });
             }
         });

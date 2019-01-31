@@ -22,16 +22,14 @@ export const getXiciPoxy = async (): Promise<string[]> => {
   });
 };
 
-const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/nt/",
-  "https://www.xicidaili.com/wt/"];
+const address = ["https://www.xicidaili.com/nn/", "https://www.xicidaili.com/wt/", "https://www.xicidaili.com/nn/"];
 
 const reqHtml = (): Promise<string> => {
   const target = parseInt(String(Math.random() * 3), 10);
-  const page = parseInt(String(Math.random() * 2), 10) + 1;
+  const page = parseInt(String(Math.random() * 3), 10) + 1;
   return new Promise((resolve) => {
-    console.log("target>>>" + target);
     console.log("url>>>" + address[target] + page);
-    request.get(address[target], (error, response, body) => {
+    request.get(address[target] + page, { timeout: 1500 }, (error, response, body) => {
       if (error || response.statusCode !== 200) {
         resolve("0");
       } else {

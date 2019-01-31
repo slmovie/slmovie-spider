@@ -5,4 +5,4 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dyjySpider_1 = __importDefault(require("./dyjy/dyjySpider"));
 const dyjySpider = new dyjySpider_1.default();
-dyjySpider.partUpdate(24727);
+dyjySpider.start(false, 500);

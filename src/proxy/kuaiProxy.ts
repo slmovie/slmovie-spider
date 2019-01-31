@@ -26,7 +26,7 @@ export const getKuaiPoxy = async (): Promise<string[]> => {
 const reqHtml = (page: string): Promise<string> => {
   return new Promise((resolve) => {
     console.log("url>>>https://ip.seofangfa.com/proxy/" + page + ".html");
-    request.get("https://ip.seofangfa.com/proxy/" + page + ".html", (error, response, body) => {
+    request.get("https://ip.seofangfa.com/proxy/" + page + ".html", { timeout: 1500 }, (error, response, body) => {
       if (error || response.statusCode !== 200) {
         resolve("0");
       } else {

@@ -10,14 +10,14 @@ import { findOneByID } from "../dyjy/detail/detailSave";
 import { getMaxLength } from "../dyjy/home/homeSpider";
 
 export default class DoubanSpider {
-
+  static db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
   public start(total: boolean) {
     try {
       getMaxLength((length: number) => {
         console.log("total is " + length);
         let end = 1;
         if (!total) {
-          end = length - 1500;
+          end = length - 500;
         }
         this.circle(length, end, () => {
           console.log("Douban spider finish!");
@@ -30,9 +30,9 @@ export default class DoubanSpider {
     }
   }
 
-  public partUpdate(start: number) {
+  public partUpdate(start: number, end: number) {
     try {
-      this.circle(start, 1, () => {
+      this.circle(start, end, () => {
         console.log("Douban spider finish!");
         process.exit(0);
       });
@@ -54,9 +54,8 @@ export default class DoubanSpider {
   }
 
   private handle(id: string, resolve: any) {
-    const db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
-    const model = db.model("Movie", MovieSchema);
-    db.on("error", (error) => {
+    const model = DoubanSpider.db.model("Movie", MovieSchema);
+    DoubanSpider.db.on("error", (error) => {
       console.log(error);
       process.exit(0);
     });
