@@ -97,6 +97,7 @@ const saveMovie = (docs, model, db) => {
                     else {
                         resolve();
                     }
+                    db.close();
                 });
             }
         });

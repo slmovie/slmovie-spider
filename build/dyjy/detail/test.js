@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const detailSave_1 = __importDefault(require("./detailSave"));
-detailSave_1.default("26113", (result) => {
+detailSave_1.default("3990", (result) => {
     console.log(result.error);
 });
 // startDetailSpider(1000, 1000, () => {

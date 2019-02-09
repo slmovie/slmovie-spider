@@ -8,6 +8,7 @@ import { IDetails } from "../typings/detailResponse";
 import { StatusBean, IStatus } from "../typings/status";
 import { findOneByID } from "../dyjy/detail/detailSave";
 import { getMaxLength } from "../dyjy/home/homeSpider";
+import chinese2Utf8 from "../utils/chinese2Utf8";
 
 export default class DoubanSpider {
   static db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
@@ -42,6 +43,16 @@ export default class DoubanSpider {
     }
   }
 
+  public updateOne(id: number) {
+    try {
+      this.handle(String(id), (result: IStatus) => {
+        console.log(JSON.stringify(result));
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   private circle(start: number, end: number, resolve: any) {
     this.handle(String(start), (result: IStatus) => {
       console.log(JSON.stringify(result));
@@ -60,30 +71,32 @@ export default class DoubanSpider {
       process.exit(0);
     });
     findOneByID(model, id, (detailFromDB: IDetails) => {
-      if (detailFromDB.details.IMDB) {
-        if (!detailFromDB.doubanID || detailFromDB.post.indexOf(".gif") !== -1 || !detailFromDB.details.average) {
-          this.getDouban(detailFromDB.details.IMDB, (douban: IDoubanSearch) => {
-            if (douban.total > 0 && douban.subjects.length > 0) {
-              this.save(model, douban.subjects[0], detailFromDB, (result: IStatus) => {
-                resolve(result);
-              });
-            } else {
-              const status = new StatusBean();
-              status.code = StatusBean.SUCCESS;
-              status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>查无资料";
-              resolve(status);
-            }
-          });
-        } else {
-          const status = new StatusBean();
-          status.code = StatusBean.SUCCESS;
-          status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>无需更新";
-          resolve(status);
-        }
+      let imdb = detailFromDB.details.IMDB;
+      let name = detailFromDB.name;
+      if (imdb || name) {
+        // if (!detailFromDB.doubanID || detailFromDB.post.indexOf(".gif") !== -1 || !detailFromDB.details.average) {
+        this.getDouban(imdb, name, (douban: IDoubanSearch) => {
+          if (douban.total > 0 && douban.subjects.length > 0) {
+            this.save(model, douban.subjects[0], detailFromDB, (result: IStatus) => {
+              resolve(result);
+            });
+          } else {
+            const status = new StatusBean();
+            status.code = StatusBean.SUCCESS;
+            status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>查无资料";
+            resolve(status);
+          }
+        });
+        // } else {
+        //   const status = new StatusBean();
+        //   status.code = StatusBean.SUCCESS;
+        //   status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>无需更新";
+        //   resolve(status);
+        // }
       } else {
         const status = new StatusBean();
         status.code = StatusBean.SUCCESS;
-        status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>没有IMDB";
+        status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>没有IMDB和名字";
         resolve(status);
       }
     }, () => {
@@ -113,21 +126,30 @@ export default class DoubanSpider {
     });
   }
 
-  private async getDouban(imdb: string, callback: any) {
+  private async getDouban(imdb: string, name: string, callback: any) {
+    let search;
+    if (imdb) {
+      search = imdb;
+    } else {
+      search = chinese2Utf8(name);
+    }
     const myProxy = new MyProxy();
     const proxy = await myProxy.getProxy();
-    this.reqJson(imdb, proxy, (result: string) => {
+    this.reqJson(search, proxy, (result: string) => {
       myProxy.hasProxy(true);
+      // console.log(result);
       callback(result);
     }, (error: any) => {
+      // console.log(error);
       myProxy.hasProxy(false);
-      this.getDouban(imdb, callback);
+      this.getDouban(imdb, name, callback);
     });
   }
 
-  private reqJson(imdb: string, proxy: string, resolve: any, reject: any) {
+  private reqJson(search: string, proxy: string, resolve: any, reject: any) {
     const myReq = request.defaults({ "proxy": proxy });
-    myReq.get("http://api.douban.com/v2/movie/search?q=" + imdb,
+    const url = "http://api.douban.com/v2/movie/search?q=" + search;
+    myReq.get(url,
       { json: true, timeout: 1500 },
       (error, response, body: string) => {
         if (error) {

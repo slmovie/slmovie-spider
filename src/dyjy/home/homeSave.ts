@@ -100,6 +100,7 @@ const saveMovie = (docs: IRecMovie[], model: mongoose.Model<any>, db: mongoose.C
           } else {
             resolve();
           }
+          db.close();
         });
       }
     });

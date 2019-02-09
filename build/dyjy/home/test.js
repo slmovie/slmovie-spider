@@ -4,9 +4,9 @@ const homeSpider_1 = require("./homeSpider");
 homeSpider_1.getMaxLength((length) => {
     console.log(length);
 });
-// startHomeSpider(() => {
-//   console.log("All finish");
-// });
+homeSpider_1.startHomeSpider(() => {
+    console.log("All finish");
+});
 // import request from "request";
 // const myReq = request.defaults({ "proxy": "http://1.20.97.238:30869" });
 // myReq.get("http://www.idyjy.com",
