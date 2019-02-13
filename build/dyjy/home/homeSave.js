@@ -83,7 +83,7 @@ const saveNewTVs = (data) => {
 };
 const saveMovie = (docs, model, db) => {
     return new Promise((resolve, reject) => {
-        model.remove({}, (err) => {
+        model.deleteMany({}, (err) => {
             if (err) {
                 console.log("saveMovie>>>remove>>>" + err);
                 reject();

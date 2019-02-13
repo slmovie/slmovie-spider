@@ -88,7 +88,7 @@ const saveNewTVs = (data: IMoviesListItem[]): Promise<void> => {
 
 const saveMovie = (docs: IRecMovie[], model: mongoose.Model<any>, db: mongoose.Connection): Promise<void> => {
   return new Promise((resolve, reject) => {
-    model.remove({}, (err) => {
+    model.deleteMany({}, (err) => {
       if (err) {
         console.log("saveMovie>>>remove>>>" + err);
         reject();

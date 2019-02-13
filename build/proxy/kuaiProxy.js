@@ -20,8 +20,8 @@ const proxy_1 = require("../typings/proxy");
 exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
     const page = parseInt(String(Math.random() * 10), 10) + 1;
     const proxys = [];
-    let res = yield reqHtml(String(page));
-    if (res !== "0") {
+    try {
+        let res = yield reqHtml(String(page));
         let $ = cheerio_1.default.load(res);
         let tr = $("tr");
         for (let line = 1; line < tr.length; line++) {
@@ -30,16 +30,23 @@ exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
             proxys.push(proxy.getProxy());
         }
     }
+    catch (error) {
+        console.log(error);
+    }
     return new Promise(resolve => {
         resolve(proxys);
     });
 });
 const reqHtml = (page) => {
-    return new Promise((resolve) => {
-        console.log("url>>>https://ip.seofangfa.com/proxy/" + page + ".html");
-        request_1.default.get("https://ip.seofangfa.com/proxy/" + page + ".html", { timeout: 1500 }, (error, response, body) => {
-            if (error || response.statusCode !== 200) {
-                resolve("0");
+    return new Promise((resolve, reject) => {
+        const url = "https://ip.seofangfa.com";
+        console.log(url);
+        request_1.default.get(url, { timeout: 1500 }, (error, response, body) => {
+            if (error) {
+                reject(error);
+            }
+            else if (response.statusCode !== 200) {
+                reject(response.statusCode);
             }
             else {
                 resolve(body);
