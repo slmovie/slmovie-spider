@@ -1,11 +1,12 @@
 import HomeRec from "./homeRec";
 import { Save } from "./homeSave";
 import { IHomeRec } from "../../typings/homeResponse";
+import { log } from "../../utils/LogUtils";
 
 export const startHomeSpider = (resolve: any) => {
   const homeRec = new HomeRec();
   homeRec.getRec((bean: IHomeRec) => {
-    console.log("Home hmtl get");
+    log("Home hmtl get");
     Save(bean).then(() => {
       resolve();
     });

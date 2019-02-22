@@ -1,10 +1,13 @@
 import { startHomeSpider, getMaxLength } from "./homeSpider";
+import { getTimeFormat } from "../../utils/DateFormat";
 getMaxLength((length: number) => {
   console.log(length);
 });
 startHomeSpider(() => {
   console.log("All finish");
 });
+
+console.log(getTimeFormat(Date.now()));
 
 // import request from "request";
 

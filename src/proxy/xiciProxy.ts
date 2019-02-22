@@ -4,6 +4,7 @@
 import cheerio from "cheerio";
 import request from "request";
 import { Proxy } from "../typings/proxy";
+import { log } from "../utils/LogUtils";
 
 export const getXiciPoxy = async (): Promise<string[]> => {
   const proxys: string[] = [];
@@ -28,7 +29,7 @@ const reqHtml = (): Promise<string> => {
   const target = parseInt(String(Math.random() * 3), 10);
   const page = parseInt(String(Math.random() * 3), 10) + 1;
   return new Promise((resolve) => {
-    console.log("url>>>" + address[target] + page);
+    log("url>>>" + address[target] + page);
     request.get(address[target] + page, { timeout: 1500 }, (error, response, body) => {
       if (error || response.statusCode !== 200) {
         resolve("0");

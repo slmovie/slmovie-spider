@@ -4,6 +4,7 @@
 import cheerio from "cheerio";
 import request from "request";
 import { Proxy } from "../typings/proxy";
+import { log } from "../utils/LogUtils";
 
 export const getKuaiPoxy = async (): Promise<string[]> => {
   const page = parseInt(String(Math.random() * 10), 10) + 1;
@@ -18,7 +19,7 @@ export const getKuaiPoxy = async (): Promise<string[]> => {
       proxys.push(proxy.getProxy());
     }
   } catch (error) {
-    console.log(error);
+    log(error);
   }
   return new Promise(resolve => {
     resolve(proxys);
@@ -28,7 +29,7 @@ export const getKuaiPoxy = async (): Promise<string[]> => {
 const reqHtml = (page: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const url = "https://ip.seofangfa.com";
-    console.log(url);
+    log(url);
     request.get(url, { timeout: 1500 }, (error, response, body) => {
       if (error) {
         reject(error);

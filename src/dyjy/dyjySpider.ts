@@ -1,24 +1,25 @@
 import { startHomeSpider, getMaxLength } from "./home/homeSpider";
 import { startDetailSpider } from "./detail/detailSpider";
+import { log } from "../utils/LogUtils";
 
 export default class DyjySpider {
   public start(total: boolean, range: number) {
     try {
       getMaxLength((length: number) => {
-        console.log("total is " + length);
+        log("total is " + length);
         let end = 1;
         if (!total) {
           end = length - range;
         }
         startHomeSpider(() => {
           startDetailSpider(length, end, () => {
-            console.log("Update Finish!");
+            log("Update Finish!", true);
             process.exit(0);
           });
         });
       });
     } catch (error) {
-      console.log("startDyjySpider>>" + JSON.stringify(error));
+      log("startDyjySpider>>" + JSON.stringify(error));
       process.exit(0);
     }
   }
@@ -26,11 +27,11 @@ export default class DyjySpider {
   public partUpdate(start: number, end: number) {
     try {
       startDetailSpider(start, end, () => {
-        console.log("Update Finish!");
+        log("Update Finish!", true);
         process.exit(0);
       });
     } catch (error) {
-      console.log("startDyjySpider>>" + JSON.stringify(error));
+      log("startDyjySpider>>" + JSON.stringify(error));
       process.exit(0);
     }
   }

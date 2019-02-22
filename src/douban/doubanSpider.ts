@@ -9,24 +9,25 @@ import { StatusBean, IStatus } from "../typings/status";
 import { findOneByID } from "../dyjy/detail/detailSave";
 import { getMaxLength } from "../dyjy/home/homeSpider";
 import chinese2Utf8 from "../utils/chinese2Utf8";
+import { log } from "../utils/LogUtils";
 
 export default class DoubanSpider {
   static db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
   public start(total: boolean) {
     try {
       getMaxLength((length: number) => {
-        console.log("total is " + length);
+        log("total is " + length);
         let end = 1;
         if (!total) {
           end = length - 500;
         }
         this.circle(length, end, () => {
-          console.log("Douban spider finish!");
+          log("Douban spider finish!", true);
           process.exit(0);
         });
       });
     } catch (error) {
-      console.log("DoubanSpider>>" + JSON.stringify(error));
+      log("DoubanSpider>>" + JSON.stringify(error));
       process.exit(0);
     }
   }
@@ -34,11 +35,11 @@ export default class DoubanSpider {
   public partUpdate(start: number, end: number) {
     try {
       this.circle(start, end, () => {
-        console.log("Douban spider finish!");
+        log("Douban spider finish!", true);
         process.exit(0);
       });
     } catch (error) {
-      console.log("DoubanSpider>>" + JSON.stringify(error));
+      log("DoubanSpider>>" + JSON.stringify(error));
       process.exit(0);
     }
   }
@@ -46,16 +47,16 @@ export default class DoubanSpider {
   public updateOne(id: number) {
     try {
       this.handle(String(id), (result: IStatus) => {
-        console.log(JSON.stringify(result));
+        log(JSON.stringify(result.error));
       });
     } catch (error) {
-      console.log(error);
+      log(error);
     }
   }
 
   private circle(start: number, end: number, resolve: any) {
     this.handle(String(start), (result: IStatus) => {
-      console.log(JSON.stringify(result));
+      log(JSON.stringify(result.error));
       if (start >= end) {
         this.circle(start - 1, end, resolve);
       } else {
@@ -67,7 +68,7 @@ export default class DoubanSpider {
   private handle(id: string, resolve: any) {
     const model = DoubanSpider.db.model("Movie", MovieSchema);
     DoubanSpider.db.on("error", (error) => {
-      console.log(error);
+      log(error);
       process.exit(0);
     });
     findOneByID(model, id, (detailFromDB: IDetails) => {
@@ -83,7 +84,7 @@ export default class DoubanSpider {
           } else {
             const status = new StatusBean();
             status.code = StatusBean.SUCCESS;
-            status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>查无资料";
+            status.error = detailFromDB.id + ">>>无资料";
             resolve(status);
           }
         });
@@ -96,7 +97,7 @@ export default class DoubanSpider {
       } else {
         const status = new StatusBean();
         status.code = StatusBean.SUCCESS;
-        status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>没有IMDB和名字";
+        status.error = detailFromDB.id + ">>>没有IMDB和名字";
         resolve(status);
       }
     }, () => {
@@ -116,11 +117,11 @@ export default class DoubanSpider {
     model.updateOne({ id: detail.id }, { $set: { "doubanID": douban.id, "post": detail.post, "details": detail.details }}, (err: any) => {
       if (err) {
         status.code = StatusBean.FAILED_NEED_REPEAT;
-        status.error = ("Douban>>>" + detail.id + " " + detail.name + ">>>更新失败");
+        status.error = (detail.id + ">>>更新失败");
         resolve(status);
       } else {
         status.code = StatusBean.SUCCESS;
-        status.error = ("Douban>>>" + detail.id + " " + detail.name + ">>>更新成功");
+        status.error = (detail.id + ">>>更新成功");
         resolve(status);
       }
     });
@@ -137,10 +138,10 @@ export default class DoubanSpider {
     const proxy = await myProxy.getProxy();
     this.reqJson(search, proxy, (result: string) => {
       myProxy.hasProxy(true);
-      // console.log(result);
+      // log(result);
       callback(result);
     }, (error: any) => {
-      // console.log(error);
+      // log(error);
       myProxy.hasProxy(false);
       this.getDouban(imdb, name, callback);
     });

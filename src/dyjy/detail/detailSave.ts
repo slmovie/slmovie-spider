@@ -4,6 +4,7 @@ import { getDBAddress } from "../../dbConstans";
 import { StatusBean } from "../../typings/status";
 import { IDetails } from "../../typings/detailResponse";
 import { MovieSchema } from "./detailCon";
+import { log } from "../../utils/LogUtils";
 
 const db = mongoose.createConnection(getDBAddress() + "/movies", { useNewUrlParser: true });
 
@@ -13,7 +14,7 @@ const SaveDetail = (id: string, resolve: any) => {
   detailSpider.getDatail(id, (detail: IDetails) => {
     try {
       db.on("error", (error) => {
-        console.log(error);
+        log(error);
         process.exit(0);
       });
       const model = db.model("Movie", MovieSchema);
@@ -36,44 +37,44 @@ const SaveDetail = (id: string, resolve: any) => {
               model.updateOne({ id: id }, { $set: { "files": detail.files }}, (err: any) => {
                 if (err) {
                   status.code = StatusBean.FAILED_NEED_REPEAT;
-                  status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
+                  status.error = (id + " 更新失败");
                   resolve(status);
                 } else {
                   status.code = StatusBean.SUCCESS;
-                  status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新成功");
+                  status.error = (id + " 更新成功");
                   resolve(status);
                 }
               });
             } else {
               status.code = StatusBean.SUCCESS;
-              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
+              //无需更新
               resolve(status);
             }
           } else {
             status.code = StatusBean.SUCCESS;
-            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
+            //无需更新
             resolve(status);
           }
         }, () => {
           model.create(detail, (error: any) => {
             if (error) {
               status.code = StatusBean.FAILED_NEED_REPEAT;
-              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>" + error);
+              status.error = (id + " " + error);
               resolve(status);
             } else {
               status.code = StatusBean.SUCCESS;
-              status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
+              status.error = (id + " 保存成功");
               resolve(status);
             }
           });
         });
       } else {
         status.code = StatusBean.SUCCESS;
-        status.error = ("SaveDetail>>>" + id + ">>>不存在");
+        //不存在
         resolve(status);
       }
     } catch (error) {
-      console.log("catch>>>" + error);
+      log("catch>>>" + error);
       SaveDetail(id, resolve);
     }
   });

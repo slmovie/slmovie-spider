@@ -4,6 +4,7 @@
 import schedule from "node-schedule";
 import DyjySpider from "./dyjy/dyjySpider";
 import DoubanSpider from "./douban/doubanSpider";
+import { log } from "./utils/LogUtils";
 
 const rule = new schedule.RecurrenceRule();
 rule.dayOfWeek = [3, 5, 0];
@@ -20,22 +21,22 @@ doubanRule.dayOfWeek = [6];
 doubanRule.hour = 4;
 doubanRule.minute = 0;
 
-console.log("schedule running");
+log("schedule running", true);
 
 schedule.scheduleJob(rule, function () {
-  console.log("start common update");
+  log("start common update");
   const dyjy = new DyjySpider();
   dyjy.start(false, 500);
 });
 
 schedule.scheduleJob(importUpdateRule, function () {
-  console.log("start douban update");
+  log("start douban update", true);
   const dyjy = new DyjySpider();
   dyjy.start(false, 2000);
 });
 
 schedule.scheduleJob(doubanRule, () => {
-  console.log("start huge update");
+  log("start huge update", true);
   const douban = new DoubanSpider();
   douban.start(false);
 });
