@@ -17,6 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cheerio_1 = __importDefault(require("cheerio"));
 const request_1 = __importDefault(require("request"));
 const proxy_1 = require("../typings/proxy");
+const LogUtils_1 = require("../utils/LogUtils");
 exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
     const page = parseInt(String(Math.random() * 10), 10) + 1;
     const proxys = [];
@@ -31,7 +32,7 @@ exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
         }
     }
     catch (error) {
-        console.log(error);
+        LogUtils_1.log(error);
     }
     return new Promise(resolve => {
         resolve(proxys);
@@ -40,7 +41,7 @@ exports.getKuaiPoxy = () => __awaiter(this, void 0, void 0, function* () {
 const reqHtml = (page) => {
     return new Promise((resolve, reject) => {
         const url = "https://ip.seofangfa.com";
-        console.log(url);
+        LogUtils_1.log(url);
         request_1.default.get(url, { timeout: 1500 }, (error, response, body) => {
             if (error) {
                 reject(error);

@@ -5,10 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const homeRec_1 = __importDefault(require("./homeRec"));
 const homeSave_1 = require("./homeSave");
+const LogUtils_1 = require("../../utils/LogUtils");
 exports.startHomeSpider = (resolve) => {
     const homeRec = new homeRec_1.default();
     homeRec.getRec((bean) => {
-        console.log("Home hmtl get");
+        LogUtils_1.log("Home hmtl get");
         homeSave_1.Save(bean).then(() => {
             resolve();
         });

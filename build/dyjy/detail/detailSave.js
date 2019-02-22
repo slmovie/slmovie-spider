@@ -8,6 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const dbConstans_1 = require("../../dbConstans");
 const status_1 = require("../../typings/status");
 const detailCon_1 = require("./detailCon");
+const LogUtils_1 = require("../../utils/LogUtils");
 const db = mongoose_1.default.createConnection(dbConstans_1.getDBAddress() + "/movies", { useNewUrlParser: true });
 const SaveDetail = (id, resolve) => {
     const detailSpider = new detail_1.default();
@@ -15,7 +16,7 @@ const SaveDetail = (id, resolve) => {
     detailSpider.getDatail(id, (detail) => {
         try {
             db.on("error", (error) => {
-                console.log(error);
+                LogUtils_1.log(error);
                 process.exit(0);
             });
             const model = db.model("Movie", detailCon_1.MovieSchema);
@@ -40,37 +41,37 @@ const SaveDetail = (id, resolve) => {
                             model.updateOne({ id: id }, { $set: { "files": detail.files } }, (err) => {
                                 if (err) {
                                     status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
-                                    status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新失败");
+                                    status.error = (id + " 更新失败");
                                     resolve(status);
                                 }
                                 else {
                                     status.code = status_1.StatusBean.SUCCESS;
-                                    status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>更新成功");
+                                    status.error = (id + " 更新成功");
                                     resolve(status);
                                 }
                             });
                         }
                         else {
                             status.code = status_1.StatusBean.SUCCESS;
-                            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
+                            //无需更新
                             resolve(status);
                         }
                     }
                     else {
                         status.code = status_1.StatusBean.SUCCESS;
-                        status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>无需更新");
+                        //无需更新
                         resolve(status);
                     }
                 }, () => {
                     model.create(detail, (error) => {
                         if (error) {
                             status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
-                            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>" + error);
+                            status.error = (id + " " + error);
                             resolve(status);
                         }
                         else {
                             status.code = status_1.StatusBean.SUCCESS;
-                            status.error = ("SaveDetail>>>" + id + " " + detail.name + ">>>保存成功");
+                            status.error = (id + " 保存成功");
                             resolve(status);
                         }
                     });
@@ -78,12 +79,12 @@ const SaveDetail = (id, resolve) => {
             }
             else {
                 status.code = status_1.StatusBean.SUCCESS;
-                status.error = ("SaveDetail>>>" + id + ">>>不存在");
+                //不存在
                 resolve(status);
             }
         }
         catch (error) {
-            console.log("catch>>>" + error);
+            LogUtils_1.log("catch>>>" + error);
             SaveDetail(id, resolve);
         }
     });

@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const homeSpider_1 = require("./homeSpider");
+const DateFormat_1 = require("../../utils/DateFormat");
 homeSpider_1.getMaxLength((length) => {
     console.log(length);
 });
 homeSpider_1.startHomeSpider(() => {
     console.log("All finish");
 });
+console.log(DateFormat_1.getTimeFormat(Date.now()));
 // import request from "request";
 // const myReq = request.defaults({ "proxy": "http://1.20.97.238:30869" });
 // myReq.get("http://www.idyjy.com",

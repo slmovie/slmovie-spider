@@ -20,51 +20,52 @@ const status_1 = require("../typings/status");
 const detailSave_1 = require("../dyjy/detail/detailSave");
 const homeSpider_1 = require("../dyjy/home/homeSpider");
 const chinese2Utf8_1 = __importDefault(require("../utils/chinese2Utf8"));
+const LogUtils_1 = require("../utils/LogUtils");
 class DoubanSpider {
     start(total) {
         try {
             homeSpider_1.getMaxLength((length) => {
-                console.log("total is " + length);
+                LogUtils_1.log("total is " + length);
                 let end = 1;
                 if (!total) {
                     end = length - 500;
                 }
                 this.circle(length, end, () => {
-                    console.log("Douban spider finish!");
+                    LogUtils_1.log("Douban spider finish!", true);
                     process.exit(0);
                 });
             });
         }
         catch (error) {
-            console.log("DoubanSpider>>" + JSON.stringify(error));
+            LogUtils_1.log("DoubanSpider>>" + JSON.stringify(error));
             process.exit(0);
         }
     }
     partUpdate(start, end) {
         try {
             this.circle(start, end, () => {
-                console.log("Douban spider finish!");
+                LogUtils_1.log("Douban spider finish!", true);
                 process.exit(0);
             });
         }
         catch (error) {
-            console.log("DoubanSpider>>" + JSON.stringify(error));
+            LogUtils_1.log("DoubanSpider>>" + JSON.stringify(error));
             process.exit(0);
         }
     }
     updateOne(id) {
         try {
             this.handle(String(id), (result) => {
-                console.log(JSON.stringify(result));
+                LogUtils_1.log(JSON.stringify(result.error));
             });
         }
         catch (error) {
-            console.log(error);
+            LogUtils_1.log(error);
         }
     }
     circle(start, end, resolve) {
         this.handle(String(start), (result) => {
-            console.log(JSON.stringify(result));
+            LogUtils_1.log(JSON.stringify(result.error));
             if (start >= end) {
                 this.circle(start - 1, end, resolve);
             }
@@ -76,7 +77,7 @@ class DoubanSpider {
     handle(id, resolve) {
         const model = DoubanSpider.db.model("Movie", detailCon_1.MovieSchema);
         DoubanSpider.db.on("error", (error) => {
-            console.log(error);
+            LogUtils_1.log(error);
             process.exit(0);
         });
         detailSave_1.findOneByID(model, id, (detailFromDB) => {
@@ -93,7 +94,7 @@ class DoubanSpider {
                     else {
                         const status = new status_1.StatusBean();
                         status.code = status_1.StatusBean.SUCCESS;
-                        status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>查无资料";
+                        status.error = detailFromDB.id + ">>>无资料";
                         resolve(status);
                     }
                 });
@@ -107,7 +108,7 @@ class DoubanSpider {
             else {
                 const status = new status_1.StatusBean();
                 status.code = status_1.StatusBean.SUCCESS;
-                status.error = "Douban>>>" + detailFromDB.id + " " + detailFromDB.name + ">>>没有IMDB和名字";
+                status.error = detailFromDB.id + ">>>没有IMDB和名字";
                 resolve(status);
             }
         }, () => {
@@ -126,12 +127,12 @@ class DoubanSpider {
         model.updateOne({ id: detail.id }, { $set: { "doubanID": douban.id, "post": detail.post, "details": detail.details } }, (err) => {
             if (err) {
                 status.code = status_1.StatusBean.FAILED_NEED_REPEAT;
-                status.error = ("Douban>>>" + detail.id + " " + detail.name + ">>>更新失败");
+                status.error = (detail.id + ">>>更新失败");
                 resolve(status);
             }
             else {
                 status.code = status_1.StatusBean.SUCCESS;
-                status.error = ("Douban>>>" + detail.id + " " + detail.name + ">>>更新成功");
+                status.error = (detail.id + ">>>更新成功");
                 resolve(status);
             }
         });
@@ -149,10 +150,10 @@ class DoubanSpider {
             const proxy = yield myProxy.getProxy();
             this.reqJson(search, proxy, (result) => {
                 myProxy.hasProxy(true);
-                // console.log(result);
+                // log(result);
                 callback(result);
             }, (error) => {
-                // console.log(error);
+                // log(error);
                 myProxy.hasProxy(false);
                 this.getDouban(imdb, name, callback);
             });

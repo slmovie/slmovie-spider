@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const node_schedule_1 = __importDefault(require("node-schedule"));
 const dyjySpider_1 = __importDefault(require("./dyjy/dyjySpider"));
 const doubanSpider_1 = __importDefault(require("./douban/doubanSpider"));
+const LogUtils_1 = require("./utils/LogUtils");
 const rule = new node_schedule_1.default.RecurrenceRule();
 rule.dayOfWeek = [3, 5, 0];
 rule.hour = 4;
@@ -21,19 +22,19 @@ const doubanRule = new node_schedule_1.default.RecurrenceRule();
 doubanRule.dayOfWeek = [6];
 doubanRule.hour = 4;
 doubanRule.minute = 0;
-console.log("schedule running");
+LogUtils_1.log("schedule running", true);
 node_schedule_1.default.scheduleJob(rule, function () {
-    console.log("start common update");
+    LogUtils_1.log("start common update");
     const dyjy = new dyjySpider_1.default();
     dyjy.start(false, 500);
 });
 node_schedule_1.default.scheduleJob(importUpdateRule, function () {
-    console.log("start douban update");
+    LogUtils_1.log("start douban update", true);
     const dyjy = new dyjySpider_1.default();
     dyjy.start(false, 2000);
 });
 node_schedule_1.default.scheduleJob(doubanRule, () => {
-    console.log("start huge update");
+    LogUtils_1.log("start huge update", true);
     const douban = new doubanSpider_1.default();
     douban.start(false);
 });
