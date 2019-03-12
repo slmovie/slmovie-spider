@@ -1,3 +1,0 @@
-export const getDBAddress = () => {
-  return "Your mongodb address"
-};

@@ -75,4 +75,3 @@ jspm_packages/
 
 # DynamoDB Local files
 .dynamodb/
-src/dbConstans.ts
