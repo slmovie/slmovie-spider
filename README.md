@@ -3,17 +3,14 @@
 #### 介绍
 双龙影视爬虫服务器
 
-#### 软件架构
-软件架构说明
-
-
-#### 安装教程
+#### 使用说明
 yarn install
 yart start-ts
 yarn spider-ts
+yarn douban-ts
+tsc
 yarn start-js
 yarn spider-js
+yarn douban-js
 
-#### 使用说明
-
-定向爬取电影信息
+定向爬取电影信息,配置好monogodb,地址填入dbConstans.ts
