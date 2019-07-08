@@ -1053,10 +1053,10 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
-eslint-config-alloy@^1.4.2:
-  version "1.4.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-alloy/-/eslint-config-alloy-1.4.2.tgz#7dcb015992a6598055679483103badf55534a0a6"
-  integrity sha512-DtzV8CC4VawC9E6T2J3RQ7tO6c6zTSxPAm8IdpnQcGDhF8/7GXCf46vclSs6tzkodFLbKwnqcCRG1QZV6BsViw==
+eslint-config-alloy@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/eslint-config-alloy/-/eslint-config-alloy-2.0.5.tgz#ce77dfa4013bcb43758e91647310592d3cade3c2"
+  integrity sha512-NWxNXgy9p7EhuAbhz3Iaue8t8CZDFY+wuS0+m8MVEhJjNvEw+gHE6JFdFgibpu848sZDRUgSq+a3cbANDc0uZw==
 
 eslint-plugin-typescript@^0.14.0:
   version "0.14.0"

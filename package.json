@@ -27,7 +27,7 @@
   "devDependencies": {
     "eslint": "^6.0.0",
     "babel-eslint": "^10.0.2",
-    "eslint-config-alloy": "^1.4.2",
+    "eslint-config-alloy": "^2.0.5",
     "eslint-plugin-typescript": "^0.14.0",
     "gulp": "^4.0.2",
     "ts-node": "^8.3.0",
