@@ -4,7 +4,7 @@ import DetailSpider from "./detail";
 import { IDetails } from "../../typings/detailResponse";
 import { IStatus } from "../../typings/status";
 
-SaveDetail("3990", (result: IStatus) => {
+SaveDetail("29729", (result: IStatus) => {
   console.log(result.error);
 });
 // startDetailSpider(1000, 1000, () => {
