@@ -1,29 +1,42 @@
-import { IDownloadFiles, IMovieInfo, MovieInfo, IDetails } from "../../typings/detailResponse";
+import {
+  IDownloadFiles,
+  IMovieInfo,
+  MovieInfo,
+  IDetails
+} from "../../typings/detailResponse";
 import { transfer } from "../../utils/XunLeiTransfer";
 import cheerio from "cheerio";
 import MyProxy from "../../proxy/proxy";
 import request from "request";
 import iconv from "iconv-lite";
+import { getBrowser } from "../../utils/pptrInstance";
 
 export default class DetailSpider {
   async getDatail(address: string, callback: any) {
-    const myProxy = new MyProxy();
-    const proxy = await myProxy.getProxy();
+    // const myProxy = new MyProxy();
+    // const proxy = await myProxy.getProxy();
     // console.log("Check " + proxy + ">>" + address);
-    this.reqHtml(address, proxy, (result: IDetails) => {
-      // console.log("Address>>" + address + "====Proxy>>" + proxy);
-      myProxy.hasProxy(true);
-      callback(result);
-    }, (error: any) => {
-      myProxy.hasProxy(false);
-      // console.log(error);
-      this.getDatail(address, callback);
-    });
+    this.reqHtmlPuppeteer(
+      address,
+      (result: IDetails) => {
+        // console.log("Address>>" + address + "====Proxy>>" + proxy);
+        // myProxy.hasProxy(true);
+        callback(result);
+      },
+      (error: any) => {
+        // myProxy.hasProxy(false);
+        // console.log(error);
+        this.getDatail(address, callback);
+      }
+    );
   }
 
   private reqHtml(address: string, proxy: string, resolve: any, reject: any) {
-    const myReq = request.defaults({ "proxy": proxy });
-    myReq.get("http://www.idyjy.com/sub/" + address + ".html",
+    const myReq = request.defaults({
+      proxy: proxy
+    });
+    myReq.get(
+      "http://www.idyjy.com/sub/" + address + ".html",
       { encoding: "binary", timeout: 3000 },
       (error, response, res) => {
         if (error) {
@@ -45,7 +58,37 @@ export default class DetailSpider {
             reject(response.statusCode);
           }
         }
-      });
+      }
+    );
+  }
+
+  private async reqHtmlPuppeteer(address: string, resolve: any, reject: any) {
+    try {
+      const browser = await getBrowser();
+      const page = await browser.newPage();
+      await page
+        .goto("http://www.idyjy.com/sub/" + address + ".html", {
+          waitUntil: "load",
+          timeout: 5000
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      const html = await page.content();
+      if (html.indexOf("如果您的浏览器没有自动跳转，请点击这里") !== -1) {
+        resolve();
+      } else {
+        const result = this.handleData(html, address);
+        if (!result.name && !result.post) {
+          reject("getDatail>>>" + address + "Not name and post");
+        } else {
+          resolve(result);
+        }
+      }
+      await page.close();
+    } catch (error) {
+      reject();
+    }
   }
 
   private handleData(html: string, address: string) {
@@ -53,16 +96,18 @@ export default class DetailSpider {
     const name = $("span", ".h1title").text();
     const detail = [];
     detail.push(" 片名： " + name);
-    $("li", ".info").each(function (i, elem) {
+    $("li", ".info").each(function(i, elem) {
       detail.push($(elem).text());
     });
+    const detailData = this.handleDetails(detail);
+    detailData.average = $("#MARK_B2").attr("value");
     const details: IDetails = {
       id: address,
       detail: detail,
       name: name,
       post: $("img", ".pic").attr("src"),
       describe: $(".endtext").text(),
-      details: this.handleDetails(detail),
+      details: detailData,
       files: this.handleDownloads($),
       doubanID: ""
     };
@@ -102,7 +147,10 @@ export default class DetailSpider {
       } else if (detail[i].indexOf("IMDB") !== -1) {
         let IMDB = detail[i].slice(5);
         details.IMDB = IMDB.replace(/\s+/g, "");
-      } else if (detail[i].indexOf("更新状态") !== -1 || detail[i].indexOf("更新至") !== -1) {
+      } else if (
+        detail[i].indexOf("更新状态") !== -1 ||
+        detail[i].indexOf("更新至") !== -1
+      ) {
         details.status = detail[i].replace(/\s+/g, "");
         details.TV = true;
       }
@@ -114,8 +162,16 @@ export default class DetailSpider {
     const downloads: IDownloadFiles[] = Array<IDownloadFiles>();
     $(".down_part_name").each(async (i, elem) => {
       const name = $("a", elem).text();
-      const fileSize = $("em", $(elem).parent().next()).text();
-      const url = $(elem).parent().prev().attr("value");
+      const fileSize = $(
+        "em",
+        $(elem)
+          .parent()
+          .next()
+      ).text();
+      const url = $(elem)
+        .parent()
+        .prev()
+        .attr("value");
       let download = "";
       // if (url.indexOf(".html") !== -1) {
       //   try {
@@ -133,7 +189,7 @@ export default class DetailSpider {
         downloads.push({
           name: name,
           fileSize: fileSize,
-          download: transfer(download),
+          download: transfer(download)
         });
       }
     });
