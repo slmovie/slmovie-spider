@@ -10,15 +10,16 @@ const db = mongoose.createConnection(getDBAddress() + "/movies", {
   useNewUrlParser: true
 });
 
+db.catch(error => {
+  log(error);
+  process.exit(0);
+});
+
 const SaveDetail = (id: string, resolve: any) => {
   const detailSpider = new DetailSpider();
   const status = new StatusBean();
   detailSpider.getDatail(id, (detail: IDetails) => {
     try {
-      db.on("error", error => {
-        log(error);
-        process.exit(0);
-      });
       const model = db.model("Movie", MovieSchema);
       if (detail) {
         findOneByID(
@@ -74,6 +75,7 @@ const SaveDetail = (id: string, resolve: any) => {
               if (error) {
                 status.code = StatusBean.FAILED_NEED_REPEAT;
                 status.error = id + " " + error;
+                console.log(error);
                 resolve(status);
               } else {
                 status.code = StatusBean.SUCCESS;

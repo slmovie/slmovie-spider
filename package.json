@@ -7,9 +7,11 @@
     "start-ts": "ts-node ./src/schedule.ts",
     "spider-ts": "ts-node ./src/updateAll.ts",
     "douban-ts": "ts-node ./src/updateDouban.ts",
+    "all-movies-ts": "ts-node ./src/updateAllMovies.ts",
     "start-js": "node ./build/schedule.js",
     "spider-js": "node ./build/updateAll.js",
-    "douban-js": "node ./build/updateDouban.js"
+    "douban-js": "node ./build/updateDouban.js",
+    "all-movies-js": "ts-node ./build/updateAllMovies.js"
   },
   "author": "",
   "license": "ISC",

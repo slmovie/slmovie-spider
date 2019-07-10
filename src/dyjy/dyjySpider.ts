@@ -24,6 +24,19 @@ export default class DyjySpider {
     }
   }
 
+  public updateAllMovies() {
+    try {
+      let end = 1;
+      startDetailSpider(29076, end, () => {
+        log("Update Finish!", true);
+        process.exit(0);
+      });
+    } catch (error) {
+      log("startDyjySpider>>" + JSON.stringify(error));
+      process.exit(0);
+    }
+  }
+
   public partUpdate(start: number, end: number) {
     try {
       startDetailSpider(start, end, () => {
@@ -35,6 +48,4 @@ export default class DyjySpider {
       process.exit(0);
     }
   }
-
 }
-

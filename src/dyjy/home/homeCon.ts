@@ -9,7 +9,7 @@ export const MovieSchema = new mongoose.Schema({
   address: String,
   post: String,
   douban: String,
-  year: String,
+  year: String
 });
 
 export const DBName = {
@@ -28,11 +28,18 @@ export const NewMoviesTableName = {
   HorrorMovie: "horrormovie",
   DramaMovie: "dramamovie",
   WarMovie: "warmovie",
-  NewMovie: "newmovie",
+  NewMovie: "newmovie"
 };
 
 export const getDB = (table: string): mongoose.Connection => {
-  return mongoose.createConnection(getDBAddress() + table, { useNewUrlParser: true });
+  const db = mongoose.createConnection(getDBAddress() + table, {
+    useNewUrlParser: true
+  });
+  db.catch(error => {
+    console.log(error);
+    process.exit(0);
+  });
+  return db;
 };
 
 export const getModel = (db: mongoose.Connection, table: string) => {
@@ -64,7 +71,7 @@ export const NewTVsTableName = {
   ChinaTv: "chinatv",
   GongTaiTv: "hongtaitv",
   WestenTv: "westentv",
-  JapanKoreanTv: "japankoreatv",
+  JapanKoreanTv: "japankoreatv"
 };
 
 export const getNewTvsModelName = (index: number) => {
