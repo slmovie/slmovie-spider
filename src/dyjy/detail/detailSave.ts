@@ -87,7 +87,7 @@ const SaveDetail = (id: string, resolve: any) => {
         );
       } else {
         status.code = StatusBean.SUCCESS;
-        //不存在
+        status.error = id + " 不存在";
         resolve(status);
       }
     } catch (error) {

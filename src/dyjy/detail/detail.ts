@@ -18,7 +18,6 @@ export default class DetailSpider {
     // console.log("Check " + proxy + ">>" + address);
     this.reqHtmlPuppeteer(
       address,
-      "",
       (result: IDetails) => {
         // console.log("Address>>" + address + "====Proxy>>" + proxy);
         // myProxy.hasProxy(true);
@@ -63,16 +62,18 @@ export default class DetailSpider {
     );
   }
 
-  private async reqHtmlPuppeteer(
-    address: string,
-    proxy: string,
-    resolve: any,
-    reject: any
-  ) {
+  private async reqHtmlPuppeteer(address: string, resolve: any, reject: any) {
     try {
       const browser = await getBrowser();
       const page = await browser.newPage();
-      await page.goto("http://www.idyjy.com/sub/" + address + ".html");
+      await page
+        .goto("http://www.idyjy.com/sub/" + address + ".html", {
+          waitUntil: "load",
+          timeout: 5000
+        })
+        .catch(error => {
+          console.log(error);
+        });
       const html = await page.content();
       if (html.indexOf("如果您的浏览器没有自动跳转，请点击这里") !== -1) {
         resolve();

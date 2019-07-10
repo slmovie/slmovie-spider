@@ -1,25 +1,32 @@
-import { HomeRecBean, IHomeRec, IRecMovie, MoviesListItemBean } from "../../typings/homeResponse";
+import {
+  HomeRecBean,
+  IHomeRec,
+  IRecMovie,
+  MoviesListItemBean
+} from "../../typings/homeResponse";
 import cheerio from "cheerio";
-import MyProxy from "../../proxy/proxy";
 import request from "request";
 import iconv from "iconv-lite";
+import { getBrowser } from "../../utils/pptrInstance";
 
 export default class HomeRec {
   public async getRec(callback: any) {
-    const myProxy = new MyProxy();
-    const proxy = await myProxy.getProxy();
-    this.reqHtml(proxy, (result: IHomeRec) => {
-      myProxy.hasProxy(true);
-      callback(result);
-    }, (error: any) => {
-      myProxy.hasProxy(false);
-      this.getRec(callback);
-    });
+    this.reqHtmlPuppeteer(
+      (result: IHomeRec) => {
+        callback(result);
+      },
+      (error: any) => {
+        this.getRec(callback);
+      }
+    );
   }
 
   private reqHtml(proxy: string, resolve: any, reject: any) {
-    const myReq = request.defaults({ "proxy": proxy });
-    myReq.get("http://www.idyjy.com",
+    const myReq = request.defaults({
+      proxy: proxy
+    });
+    myReq.get(
+      "http://www.idyjy.com",
       { encoding: "binary", timeout: 1000 },
       (error, response, res) => {
         if (error) {
@@ -31,7 +38,11 @@ export default class HomeRec {
             result.data.hotMovies = this.getHotMovie(body);
             result.data.newTVs = this.getNewTVs(body);
             result.data.newMovies = this.getNewMovies(body);
-            if (result.data.hotMovies.length !== 0 && result.data.newTVs.length !== 0 && result.data.newMovies.length !== 0) {
+            if (
+              result.data.hotMovies.length !== 0 &&
+              result.data.newTVs.length !== 0 &&
+              result.data.newMovies.length !== 0
+            ) {
               resolve(result);
             } else {
               reject("Error");
@@ -40,7 +51,32 @@ export default class HomeRec {
             reject(response.statusCode);
           }
         }
-      });
+      }
+    );
+  }
+  private async reqHtmlPuppeteer(resolve: any, reject: any) {
+    try {
+      const browser = await getBrowser();
+      const page = await browser.newPage();
+      await page.goto("http://www.idyjy.com");
+      const html = await page.content();
+      const result = new HomeRecBean();
+      result.data.hotMovies = this.getHotMovie(html);
+      result.data.newTVs = this.getNewTVs(html);
+      result.data.newMovies = this.getNewMovies(html);
+      if (
+        result.data.hotMovies.length !== 0 &&
+        result.data.newTVs.length !== 0 &&
+        result.data.newMovies.length !== 0
+      ) {
+        resolve(result);
+      } else {
+        reject("Error");
+      }
+      await page.close();
+    } catch (error) {
+      reject();
+    }
   }
 
   private getHotMovie = (html: string) => {
@@ -51,7 +87,7 @@ export default class HomeRec {
       movies.push(movie);
     });
     return movies;
-  }
+  };
 
   private getNewMovies = (html: string) => {
     let $ = cheerio.load(html);
@@ -69,7 +105,7 @@ export default class HomeRec {
       result.push(typeMovies);
     }
     return result;
-  }
+  };
 
   private getNewTVs = (html: string) => {
     let $ = cheerio.load(html);
@@ -87,30 +123,30 @@ export default class HomeRec {
       result.push(typeMovies);
     }
     return result;
-  }
+  };
 
   private getMovie = ($: CheerioStatic, elem: CheerioElement): IRecMovie => {
     const address = this.getMovidId($, elem);
     return {
-      "name": $(elem).attr("title"),
+      name: $(elem).attr("title"),
       //网页地址
-      "address": address,
+      address: address,
       //海报图片
-      "post": $("img", elem).attr("original"),
+      post: $("img", elem).attr("original"),
       //豆瓣评分
-      "douban": $("info", $(".pRightBottom", elem)).text(),
+      douban: $("info", $(".pRightBottom", elem)).text(),
       //上映日期
-      "year": $("info", $(".pLeftTop", elem)[0]).text(),
-      "from": "dyjy",
+      year: $("info", $(".pLeftTop", elem)[0]).text(),
+      from: "dyjy"
     };
-  }
+  };
 
   private getMovidId = ($: CheerioStatic, elem: CheerioElement): string => {
     let address = $(elem).attr("href");
     let split = address.split("/");
     address = split[split.length - 1].split(".")[0];
     return address;
-  }
+  };
 
   private newTVsType = (index: number): string => {
     if (index === 1) {
@@ -124,7 +160,7 @@ export default class HomeRec {
     } else {
       return "最近更新";
     }
-  }
+  };
 
   private newMoviesType = (index: number): string => {
     if (index === 1) {
@@ -144,5 +180,5 @@ export default class HomeRec {
     } else {
       return "最近更新";
     }
-  }
+  };
 }
