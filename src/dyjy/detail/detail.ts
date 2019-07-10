@@ -73,11 +73,16 @@ export default class DetailSpider {
       const browser = await getBrowser();
       const page = await browser.newPage();
       await page.goto("http://www.idyjy.com/sub/" + address + ".html");
-      const result = this.handleData(await page.content(), address);
-      if (!result.name && !result.post) {
-        reject("getDatail>>>" + address + "Not name and post");
+      const html = await page.content();
+      if (html.indexOf("如果您的浏览器没有自动跳转，请点击这里") !== -1) {
+        resolve();
       } else {
-        resolve(result);
+        const result = this.handleData(html, address);
+        if (!result.name && !result.post) {
+          reject("getDatail>>>" + address + "Not name and post");
+        } else {
+          resolve(result);
+        }
       }
       await page.close();
     } catch (error) {
