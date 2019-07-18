@@ -16,6 +16,7 @@ export default class HomeRec {
         callback(result);
       },
       (error: any) => {
+        console.error(error);
         this.getRec(callback);
       }
     );

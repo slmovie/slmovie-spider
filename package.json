@@ -11,7 +11,7 @@
     "start-js": "node ./build/schedule.js",
     "spider-js": "node ./build/updateAll.js",
     "douban-js": "node ./build/updateDouban.js",
-    "all-movies-js": "ts-node ./build/updateAllMovies.js"
+    "all-movies-js": "node ./build/updateAllMovies.js"
   },
   "author": "",
   "license": "ISC",

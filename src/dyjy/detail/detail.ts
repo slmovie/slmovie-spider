@@ -6,7 +6,6 @@ import {
 } from "../../typings/detailResponse";
 import { transfer } from "../../utils/XunLeiTransfer";
 import cheerio from "cheerio";
-import MyProxy from "../../proxy/proxy";
 import request from "request";
 import iconv from "iconv-lite";
 import { getBrowser } from "../../utils/pptrInstance";
