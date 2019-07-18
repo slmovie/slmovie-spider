@@ -76,7 +76,7 @@ export default class HomeRec {
       }
       await page.close();
     } catch (error) {
-      reject();
+      reject(error);
     }
   }
 
