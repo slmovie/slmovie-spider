@@ -29,7 +29,7 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "eslint": "^6.0.1",
     "eslint-config-alloy": "^2.0.5",
     "eslint-plugin-typescript": "^0.14.0",
