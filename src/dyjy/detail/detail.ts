@@ -95,11 +95,15 @@ export default class DetailSpider {
     const name = $("span", ".h1title").text();
     const detail = [];
     detail.push(" 片名： " + name);
-    $("li", ".info").each(function(i, elem) {
+    $("li", ".info").each(function (i, elem) {
       detail.push($(elem).text());
     });
     const detailData = this.handleDetails(detail);
-    detailData.average = $("#MARK_B2").attr("value");
+    var average = $("#MARK_B2").attr("value");
+    if (!average) {
+      average = ""
+    }
+    detailData.average = average
     const details: IDetails = {
       id: address,
       detail: detail,
@@ -167,11 +171,7 @@ export default class DetailSpider {
           .parent()
           .next()
       ).text();
-      const url = $(elem)
-        .parent()
-        .prev()
-        .attr("value");
-      let download = "";
+      const download = $(elem).parent().prev().attr("value");
       // if (url.indexOf(".html") !== -1) {
       //   try {
       //     const response = await getDownloadUrl("");
@@ -182,7 +182,6 @@ export default class DetailSpider {
       //   } catch (error) {
       //   }
       // } else {
-      download = url;
       // }
       if (download) {
         downloads.push({

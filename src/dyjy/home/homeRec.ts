@@ -127,13 +127,24 @@ export default class HomeRec {
   };
 
   private getMovie = ($: CheerioStatic, elem: CheerioElement): IRecMovie => {
-    const address = this.getMovidId($, elem);
+    var address = this.getMovidId($, elem);
+    if (!address) {
+      address = ""
+    }
+    var name = $(elem).attr("title")
+    if (!name) {
+      name = ""
+    }
+    var post = $("img", elem).attr("original")
+    if (!post) {
+      post = ""
+    }
     return {
-      name: $(elem).attr("title"),
+      name: name,
       //网页地址
       address: address,
       //海报图片
-      post: $("img", elem).attr("original"),
+      post: post,
       //豆瓣评分
       douban: $("info", $(".pRightBottom", elem)).text(),
       //上映日期
@@ -142,10 +153,12 @@ export default class HomeRec {
     };
   };
 
-  private getMovidId = ($: CheerioStatic, elem: CheerioElement): string => {
+  private getMovidId = ($: CheerioStatic, elem: CheerioElement): string | undefined => {
     let address = $(elem).attr("href");
-    let split = address.split("/");
-    address = split[split.length - 1].split(".")[0];
+    if (address) {
+      let split = address.split("/");
+      address = split[split.length - 1].split(".")[0];
+    }
     return address;
   };
 

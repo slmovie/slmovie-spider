@@ -36,7 +36,7 @@ export interface IDetails {
   id: string;
   detail: string[];
   name: string;
-  post: string;
+  post: string | undefined;
   describe: string;
   details: IMovieInfo;
   files: IDownloadFiles[];
