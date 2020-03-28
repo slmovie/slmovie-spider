@@ -1,3 +1,3 @@
 export const getDBAddress = () => {
-  return "Your mongodb address";
+  return "mongodb://localhost:14369";
 };
