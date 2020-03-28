@@ -27,7 +27,7 @@ export default class DyjySpider {
   public updateAllMovies() {
     try {
       let end = 25000;
-      startDetailSpider(20000, 15000, () => {
+      startDetailSpider(18927, 15000, () => {
         log("Update Finish!", true);
         process.exit(0);
       });
