@@ -7,7 +7,6 @@ export const startHomeSpider = (resolve: any) => {
   const homeRec = new HomeRec();
   homeRec.getRec((bean: IHomeRec) => {
     log("Home hmtl get");
-    log(JSON.stringify(bean))
     Save(bean).then(() => {
       resolve();
     });
